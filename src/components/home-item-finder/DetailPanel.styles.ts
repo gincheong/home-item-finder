@@ -256,3 +256,53 @@ export const AddItemBtn = styled.button`
   font-size: 12px;
   cursor: pointer;
 `;
+
+export const MoveSection = styled.div`
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #1e293b;
+`;
+
+export const MoveSectionLabel = styled.div`
+  font-size: 10px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+`;
+
+export const MoveRow = styled.div`
+  display: flex;
+  gap: 4px;
+  align-items: center;
+`;
+
+export const MoveSelect = styled.select`
+  flex: 1;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 5px;
+  color: #cbd5e1;
+  font-size: 11px;
+  padding: 4px 6px;
+  outline: none;
+  min-width: 0;
+`;
+
+export const MoveBtn = styled.button`
+  padding: 4px 10px;
+  background: #1a2e1a;
+  border: 1px solid #4ade80;
+  border-radius: 5px;
+  color: #4ade80;
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+`;

@@ -24,6 +24,11 @@ import {
 	ItemTagInput,
 	ItemWrapper,
 	ItemsContainer,
+	MoveBtn,
+	MoveRow,
+	MoveSection,
+	MoveSectionLabel,
+	MoveSelect,
 	PanelCloseBtn,
 	PanelContainer,
 	PanelDeleteBtn,
@@ -34,7 +39,7 @@ import {
 	TagList,
 	ToggleBtn,
 } from './DetailPanel.styles';
-import type { Drawer } from './types';
+import type { Drawer, Furniture } from './types';
 
 export default function DetailPanel() {
 	const {
@@ -50,6 +55,7 @@ export default function DetailPanel() {
 		addItem,
 		updateItem,
 		deleteItem,
+		moveItem,
 	} = useHomeStore();
 
 	const f = furniture.find((fu) => fu.id === detailFurnitureId);
@@ -160,6 +166,10 @@ export default function DetailPanel() {
 							updateItem(f.id, drawer.id, itemId, updates)
 						}
 						onDeleteItem={(itemId) => deleteItem(f.id, drawer.id, itemId)}
+						onMoveItem={(itemId, toFurnitureId, toDrawerId) =>
+							moveItem(f.id, drawer.id, itemId, toFurnitureId, toDrawerId)
+						}
+						allFurniture={furniture}
 						dragging={draggingDrawer === drawer.id}
 						onDragStart={() => handleDragStart(drawer.id)}
 						onDragOver={() => handleDragOver(drawer.id)}
@@ -195,6 +205,8 @@ interface DrawerCardProps {
 		updates: { name?: string; memo?: string; tags?: string[] },
 	) => void;
 	onDeleteItem: (itemId: string) => void;
+	onMoveItem: (itemId: string, toFurnitureId: string, toDrawerId: string) => void;
+	allFurniture: Furniture[];
 	dragging: boolean;
 	onDragStart: () => void;
 	onDragOver: () => void;
@@ -203,6 +215,7 @@ interface DrawerCardProps {
 
 function DrawerCard({
 	drawer,
+	furnitureId,
 	expanded,
 	onToggle,
 	onLabelChange,
@@ -214,11 +227,16 @@ function DrawerCard({
 	setEditingItem,
 	onUpdateItem,
 	onDeleteItem,
+	onMoveItem,
+	allFurniture,
 	dragging,
 	onDragStart,
 	onDragOver,
 	onDrop,
 }: DrawerCardProps) {
+	const [moveFurnitureId, setMoveFurnitureId] = useState(furnitureId);
+	const targetFurniture = allFurniture.find((f) => f.id === moveFurnitureId) ?? allFurniture[0];
+	const [moveDrawerId, setMoveDrawerId] = useState(drawer.id);
 	return (
 		// biome-ignore lint/a11y/noStaticElementInteractions: drag-and-drop reorder UI
 		<DrawerCardWrapper
@@ -287,6 +305,43 @@ function DrawerCard({
 									>
 										완료
 									</ItemDoneBtn>
+									<MoveSection>
+										<MoveSectionLabel>다른 서랍으로 이동</MoveSectionLabel>
+										<MoveRow>
+											<MoveSelect
+												value={moveFurnitureId}
+												onChange={(e) => {
+													setMoveFurnitureId(e.target.value);
+													const f = allFurniture.find((fu) => fu.id === e.target.value);
+													setMoveDrawerId(f?.drawers[0]?.id ?? '');
+												}}
+											>
+												{allFurniture.map((f) => (
+													<option key={f.id} value={f.id}>{f.label}</option>
+												))}
+											</MoveSelect>
+											<MoveSelect
+												value={moveDrawerId}
+												onChange={(e) => setMoveDrawerId(e.target.value)}
+											>
+												{(targetFurniture?.drawers ?? []).map((d) => (
+													<option key={d.id} value={d.id}>{d.label}</option>
+												))}
+											</MoveSelect>
+											<MoveBtn
+												type="button"
+												disabled={moveFurnitureId === furnitureId && moveDrawerId === drawer.id}
+												onClick={() => {
+													if (moveDrawerId) {
+														onMoveItem(item.id, moveFurnitureId, moveDrawerId);
+														setEditingItem(null);
+													}
+												}}
+											>
+												이동
+											</MoveBtn>
+										</MoveRow>
+									</MoveSection>
 								</ItemEditForm>
 							) : (
 								<ItemRow>
