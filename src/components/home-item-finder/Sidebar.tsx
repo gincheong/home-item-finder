@@ -129,7 +129,6 @@ export default function Sidebar({ onAddRoom, toast }: SidebarProps) {
 									크기: {Math.round(selectedFurniture.width)} ×{' '}
 									{Math.round(selectedFurniture.height)}
 								</div>
-								<div>회전: {Math.round(selectedFurniture.rotation)}°</div>
 								<div style={{ marginTop: 4 }}>
 									서랍 {selectedFurniture.drawers.length}개
 								</div>

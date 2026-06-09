@@ -30,7 +30,6 @@ export interface Furniture {
 	y: number;
 	width: number;
 	height: number;
-	rotation: number;
 	drawers: Drawer[];
 }
 
@@ -41,6 +40,5 @@ export interface Room {
 	y: number;
 	width: number;
 	height: number;
-	rotation: number;
 	color: string;
 }

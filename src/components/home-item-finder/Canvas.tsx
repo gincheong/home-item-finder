@@ -361,7 +361,6 @@ export default function Canvas({ width, height }: CanvasProps) {
 								key={room.id}
 								x={room.x}
 								y={room.y}
-								rotation={room.rotation}
 								draggable={!drawMode}
 								ref={(node) => {
 									roomGroupRefs.current[room.id] = node;
@@ -402,7 +401,6 @@ export default function Canvas({ width, height }: CanvasProps) {
 										y: node.y(),
 										width: Math.max(MIN_SIZE, room.width * Math.abs(sx)),
 										height: Math.max(MIN_SIZE, room.height * Math.abs(sy)),
-										rotation: node.rotation(),
 									});
 								}}
 							>
@@ -440,7 +438,6 @@ export default function Canvas({ width, height }: CanvasProps) {
 								key={f.id}
 								x={f.x}
 								y={f.y}
-								rotation={f.rotation}
 								draggable
 								ref={(node) => {
 									furnitureGroupRefs.current[f.id] = node;
@@ -517,7 +514,6 @@ export default function Canvas({ width, height }: CanvasProps) {
 										y: newY,
 										width: newW,
 										height: newH,
-										rotation: node.rotation(),
 									});
 								}}
 							>
@@ -554,7 +550,7 @@ export default function Canvas({ width, height }: CanvasProps) {
 						anchorFill="#0f172a"
 						anchorSize={10}
 						anchorCornerRadius={3}
-						rotateEnabled
+						rotateEnabled={false}
 						keepRatio={false}
 					/>
 
@@ -566,7 +562,7 @@ export default function Canvas({ width, height }: CanvasProps) {
 						anchorFill="#0f172a"
 						anchorSize={10}
 						anchorCornerRadius={3}
-						rotateEnabled
+						rotateEnabled={false}
 						keepRatio={false}
 					/>
 				</Layer>

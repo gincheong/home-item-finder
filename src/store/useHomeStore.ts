@@ -134,7 +134,6 @@ export const useHomeStore = create<HomeStore>()(
 								y,
 								width,
 								height,
-								rotation: 0,
 								color,
 							},
 						],
@@ -199,7 +198,6 @@ export const useHomeStore = create<HomeStore>()(
 						y: cy - defaults.height / 2,
 						width: defaults.width,
 						height: defaults.height,
-						rotation: 0,
 						drawers: [],
 					};
 
