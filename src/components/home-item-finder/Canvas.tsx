@@ -448,7 +448,6 @@ export default function Canvas({ width, height }: CanvasProps) {
 								onClick={(e) => {
 									e.cancelBubble = true;
 									selectFurniture(f.id);
-									selectRoom(f.roomId);
 									openDetail(f.id);
 								}}
 								onContextMenu={(e) => {

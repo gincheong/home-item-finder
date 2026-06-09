@@ -229,7 +229,10 @@ export const useHomeStore = create<HomeStore>()(
 					}));
 				},
 
-				selectFurniture: (id) => set({ selectedFurnitureId: id }),
+				selectFurniture: (id) => {
+					const roomId = id ? get().furniture.find((f) => f.id === id)?.roomId : undefined;
+					set({ selectedFurnitureId: id, ...(roomId ? { selectedRoomId: roomId } : {}) });
+				},
 
 				openDetail: (id) => set({ detailFurnitureId: id }),
 
