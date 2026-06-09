@@ -39,7 +39,7 @@ function RouteComponent() {
 	const [showHelp, setShowHelp] = useState(false);
 	const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-	const { detailFurnitureId, exportData, importData, clearData } =
+	const { detailFurnitureId, exportData, importData, clearData, _past, _future } =
 		useHomeStore();
 
 	const showToast = (msg: string) => {
@@ -47,6 +47,22 @@ function RouteComponent() {
 		if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
 		toastTimerRef.current = setTimeout(() => setToast(null), 2500);
 	};
+
+	useEffect(() => {
+		const handler = (e: KeyboardEvent) => {
+			if (!(e.ctrlKey || e.metaKey)) return;
+			const { undo, redo } = useHomeStore.getState();
+			if (e.key === 'z') {
+				e.preventDefault();
+				e.shiftKey ? redo() : undo();
+			} else if (e.key === 'y') {
+				e.preventDefault();
+				redo();
+			}
+		};
+		window.addEventListener('keydown', handler);
+		return () => window.removeEventListener('keydown', handler);
+	}, []);
 
 	useEffect(() => {
 		const updateSize = () => {
@@ -98,6 +114,20 @@ function RouteComponent() {
 			<Header>
 				<SearchBar />
 				<HeaderActions>
+					<HeaderBtn
+						onClick={() => useHomeStore.getState().undo()}
+						disabled={_past.length === 0}
+						title="실행 취소 (Ctrl+Z)"
+					>
+						↩ 실행취소
+					</HeaderBtn>
+					<HeaderBtn
+						onClick={() => useHomeStore.getState().redo()}
+						disabled={_future.length === 0}
+						title="다시 실행 (Ctrl+Shift+Z)"
+					>
+						↪ 다시실행
+					</HeaderBtn>
 					<HeaderBtn onClick={exportData}>내보내기</HeaderBtn>
 					<HeaderBtn onClick={handleImport}>가져오기</HeaderBtn>
 					<HeaderBtn onClick={handleClear} danger>
@@ -219,13 +249,17 @@ function HeaderBtn({
 	children,
 	onClick,
 	danger,
+	disabled,
+	title,
 }: {
 	children: React.ReactNode;
 	onClick: () => void;
 	danger?: boolean;
+	disabled?: boolean;
+	title?: string;
 }) {
 	return (
-		<StyledHeaderBtn type="button" onClick={onClick} $danger={danger}>
+		<StyledHeaderBtn type="button" onClick={onClick} $danger={danger} disabled={disabled} title={title}>
 			{children}
 		</StyledHeaderBtn>
 	);

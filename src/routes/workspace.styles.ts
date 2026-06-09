@@ -69,6 +69,11 @@ export const StyledHeaderBtn = styled.button<{ $danger?: boolean }>`
   color: ${({ $danger }) => ($danger ? '#fca5a5' : '#94a3b8')};
   font-size: 12px;
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
 `;
 
 export const HelpBtn = styled.button`
