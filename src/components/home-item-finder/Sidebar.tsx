@@ -27,6 +27,7 @@ export default function Sidebar({ onAddRoom, toast }: SidebarProps) {
 		selectRoom,
 		addFurniture,
 		updateRoom,
+		deleteRoom,
 	} = useHomeStore();
 
 	const [editingRoomName, setEditingRoomName] = useState(false);
@@ -236,6 +237,16 @@ export default function Sidebar({ onAddRoom, toast }: SidebarProps) {
 									{furniture.filter((f) => f.roomId === selectedRoom.id).length}
 									개
 								</div>
+								<button
+									type="button"
+									onClick={() => {
+										if (window.confirm(`"${selectedRoom.name}"을(를) 삭제할까요?\n방 안의 가구와 아이템도 모두 삭제됩니다.`))
+											deleteRoom(selectedRoom.id);
+									}}
+									style={deleteBtn}
+								>
+									🗑️ 방 삭제
+								</button>
 							</div>
 						) : null}
 					</Section>
@@ -297,6 +308,19 @@ const roomBtn: React.CSSProperties = {
 	display: 'flex',
 	alignItems: 'center',
 	gap: 8,
+};
+
+const deleteBtn: React.CSSProperties = {
+	marginTop: 8,
+	width: '100%',
+	padding: '6px 10px',
+	background: 'none',
+	border: '1px solid #7f1d1d',
+	borderRadius: 7,
+	color: '#f87171',
+	fontSize: 11,
+	cursor: 'pointer',
+	textAlign: 'center',
 };
 
 const furnitureBtn: React.CSSProperties = {

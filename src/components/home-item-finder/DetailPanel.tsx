@@ -8,6 +8,7 @@ export default function DetailPanel() {
 		detailFurnitureId,
 		openDetail,
 		updateFurniture,
+		deleteFurniture,
 		addDrawer,
 		updateDrawer,
 		deleteDrawer,
@@ -112,6 +113,24 @@ export default function DetailPanel() {
 						outline: 'none',
 					}}
 				/>
+				<button
+					type="button"
+					onClick={() => {
+						if (window.confirm(`"${f.label}"을(를) 삭제할까요?\n안에 있는 서랍과 아이템도 모두 삭제됩니다.`))
+							deleteFurniture(f.id);
+					}}
+					style={{
+						background: 'none',
+						border: '1px solid #7f1d1d',
+						borderRadius: 6,
+						color: '#f87171',
+						cursor: 'pointer',
+						fontSize: 12,
+						padding: '4px 8px',
+					}}
+				>
+					🗑️ 삭제
+				</button>
 				<button
 					type="button"
 					onClick={() => openDetail(null)}
