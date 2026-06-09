@@ -1,5 +1,5 @@
 import type Konva from 'konva';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
 	Group,
 	Layer,
@@ -82,6 +82,7 @@ export default function Canvas({ width, height }: CanvasProps) {
 		furniture,
 		selectedRoomId,
 		selectedFurnitureId,
+		searchQuery,
 		selectRoom,
 		selectFurniture,
 		addRoom,
@@ -91,7 +92,13 @@ export default function Canvas({ width, height }: CanvasProps) {
 		updateFurniture,
 		deleteFurniture,
 		openDetail,
+		getSearchResults,
 	} = useHomeStore();
+
+	const highlightedFurnitureIds = useMemo(() => {
+		if (!searchQuery.trim()) return new Set<string>();
+		return new Set(getSearchResults().map((r) => r.furniture.id));
+	}, [searchQuery, getSearchResults]);
 
 	const [view, setView] = useState<ViewTransform>({ x: 0, y: 0, scale: 1 });
 	const [drawMode, setDrawMode] = useState(false);
@@ -425,6 +432,7 @@ export default function Canvas({ width, height }: CanvasProps) {
 					{/* Furniture */}
 					{furniture.map((f) => {
 						const selected = f.id === selectedFurnitureId;
+						const highlighted = highlightedFurnitureIds.has(f.id);
 						const color = FURNITURE_COLORS[f.type] ?? '#4a5568';
 						const icon = FURNITURE_ICONS[f.type] ?? '📦';
 						return (
@@ -518,10 +526,10 @@ export default function Canvas({ width, height }: CanvasProps) {
 									width={f.width}
 									height={f.height}
 									fill={color}
-									stroke={selected ? '#f59e0b' : 'rgba(255,255,255,0.12)'}
-									strokeWidth={selected ? 2.5 : 1}
-									shadowColor={selected ? '#f59e0b' : 'transparent'}
-									shadowBlur={selected ? 14 : 0}
+									stroke={highlighted ? '#34d399' : selected ? '#f59e0b' : 'rgba(255,255,255,0.12)'}
+									strokeWidth={highlighted || selected ? 2.5 : 1}
+									shadowColor={highlighted ? '#34d399' : selected ? '#f59e0b' : 'transparent'}
+									shadowBlur={highlighted ? 20 : selected ? 14 : 0}
 									cornerRadius={5}
 									opacity={0.92}
 								/>
