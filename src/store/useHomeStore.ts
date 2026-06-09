@@ -49,6 +49,7 @@ interface HomeStore {
 		id: string,
 		updates: Partial<Omit<Room, 'id' | 'color'>>,
 	) => void;
+	moveRoomWithFurniture: (id: string, x: number, y: number) => void;
 	deleteRoom: (id: string) => void;
 	selectRoom: (id: string | null) => void;
 
@@ -119,6 +120,21 @@ export const useHomeStore = create<HomeStore>()(
 				set((s) => ({
 					rooms: s.rooms.map((r) => (r.id === id ? { ...r, ...updates } : r)),
 				}));
+			},
+
+			moveRoomWithFurniture: (id, x, y) => {
+				set((s) => {
+					const room = s.rooms.find((r) => r.id === id);
+					if (!room) return s;
+					const dx = x - room.x;
+					const dy = y - room.y;
+					return {
+						rooms: s.rooms.map((r) => (r.id === id ? { ...r, x, y } : r)),
+						furniture: s.furniture.map((f) =>
+							f.roomId === id ? { ...f, x: f.x + dx, y: f.y + dy } : f,
+						),
+					};
+				});
 			},
 
 			deleteRoom: (id) => {

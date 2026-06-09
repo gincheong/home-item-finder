@@ -68,6 +68,7 @@ export default function Canvas({ width, height }: CanvasProps) {
 		selectFurniture,
 		addRoom,
 		updateRoom,
+		moveRoomWithFurniture,
 		deleteRoom,
 		updateFurniture,
 		deleteFurniture,
@@ -359,10 +360,11 @@ export default function Canvas({ width, height }: CanvasProps) {
 										});
 								}}
 								onDragEnd={(e) => {
-									updateRoom(room.id, {
-										x: snap(e.target.x()),
-										y: snap(e.target.y()),
-									});
+									moveRoomWithFurniture(
+										room.id,
+										snap(e.target.x()),
+										snap(e.target.y()),
+									);
 								}}
 								onTransformEnd={(e) => {
 									const node = e.target;
@@ -436,8 +438,28 @@ export default function Canvas({ width, height }: CanvasProps) {
 											id: f.id,
 										});
 								}}
+								onDragMove={(e) => {
+									const room = rooms.find((r) => r.id === f.roomId);
+									if (!room) return;
+									const node = e.target;
+									node.x(
+										Math.min(
+											Math.max(node.x(), room.x),
+											room.x + room.width - f.width,
+										),
+									);
+									node.y(
+										Math.min(
+											Math.max(node.y(), room.y),
+											room.y + room.height - f.height,
+										),
+									);
+								}}
 								onDragEnd={(e) => {
-									updateFurniture(f.id, { x: e.target.x(), y: e.target.y() });
+									updateFurniture(f.id, {
+										x: snap(e.target.x()),
+										y: snap(e.target.y()),
+									});
 								}}
 								onTransformEnd={(e) => {
 									const node = e.target;
@@ -445,11 +467,31 @@ export default function Canvas({ width, height }: CanvasProps) {
 									const sy = node.scaleY();
 									node.scaleX(1);
 									node.scaleY(1);
+
+									const room = rooms.find((r) => r.id === f.roomId);
+									let newW = Math.max(40, f.width * Math.abs(sx));
+									let newH = Math.max(30, f.height * Math.abs(sy));
+									let newX = node.x();
+									let newY = node.y();
+
+									if (room) {
+										newW = Math.min(newW, room.width);
+										newH = Math.min(newH, room.height);
+										newX = Math.min(
+											Math.max(newX, room.x),
+											room.x + room.width - newW,
+										);
+										newY = Math.min(
+											Math.max(newY, room.y),
+											room.y + room.height - newH,
+										);
+									}
+
 									updateFurniture(f.id, {
-										x: node.x(),
-										y: node.y(),
-										width: Math.max(40, f.width * Math.abs(sx)),
-										height: Math.max(30, f.height * Math.abs(sy)),
+										x: newX,
+										y: newY,
+										width: newW,
+										height: newH,
 										rotation: node.rotation(),
 									});
 								}}
