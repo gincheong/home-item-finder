@@ -526,10 +526,10 @@ export default function Canvas({ width, height }: CanvasProps) {
 									width={f.width}
 									height={f.height}
 									fill={color}
-									stroke={highlighted ? '#34d399' : selected ? '#f59e0b' : 'rgba(255,255,255,0.12)'}
-									strokeWidth={highlighted || selected ? 2.5 : 1}
-									shadowColor={highlighted ? '#34d399' : selected ? '#f59e0b' : 'transparent'}
-									shadowBlur={highlighted ? 20 : selected ? 14 : 0}
+									stroke={highlighted ? '#34d399' : selected ? '#60a5fa' : 'rgba(255,255,255,0.12)'}
+									strokeWidth={highlighted || selected ? 3 : 1}
+									shadowColor={highlighted ? '#34d399' : selected ? '#60a5fa' : 'transparent'}
+									shadowBlur={highlighted ? 20 : selected ? 16 : 0}
 									cornerRadius={5}
 									opacity={0.92}
 								/>
@@ -559,11 +559,11 @@ export default function Canvas({ width, height }: CanvasProps) {
 						keepRatio={false}
 					/>
 
-					{/* Furniture Transformer (황금색) */}
+					{/* Furniture Transformer */}
 					<Transformer
 						ref={furnitureTrRef}
-						borderStroke="#f59e0b"
-						anchorStroke="#f59e0b"
+						borderStroke="#60a5fa"
+						anchorStroke="#60a5fa"
 						anchorFill="#0f172a"
 						anchorSize={10}
 						anchorCornerRadius={3}
