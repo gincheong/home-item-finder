@@ -10,6 +10,24 @@ import {
 	Transformer,
 } from 'react-konva';
 import { useHomeStore } from '#/store/useHomeStore';
+import {
+	ContextMenu,
+	ContextMenuDeleteItem,
+	ContextMenuItem,
+	ContextMenuLabel,
+	DrawingHint,
+	EmptyStateIcon,
+	EmptyStateInner,
+	EmptyStateSubtitle,
+	EmptyStateTitle,
+	EmptyStateWrapper,
+	PanHint,
+	ZoomBtn,
+	ZoomControls,
+	ZoomDivider,
+	ZoomLabel,
+	ZoomResetBtn,
+} from './Canvas.styles';
 import type { Point } from './types';
 
 const GRID_SIZE = 20;
@@ -568,121 +586,64 @@ export default function Canvas({ width, height }: CanvasProps) {
 			{ctxMenu && (
 				// biome-ignore lint/a11y/noStaticElementInteractions: context menu click isolation
 				// biome-ignore lint/a11y/useKeyWithClickEvents: context menu does not need keyboard equivalent
-				<div
-					style={{
-						position: 'absolute',
-						left: ctxMenu.x,
-						top: ctxMenu.y,
-						background: '#1e293b',
-						border: '1px solid #334155',
-						borderRadius: 10,
-						padding: '4px 0',
-						zIndex: 400,
-						minWidth: 140,
-						boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
-					}}
+				<ContextMenu
+					style={{ left: ctxMenu.x, top: ctxMenu.y }}
 					onClick={(e) => e.stopPropagation()}
 				>
-					<div
-						style={{
-							padding: '6px 14px 8px',
-							fontSize: 11,
-							color: '#64748b',
-							borderBottom: '1px solid #334155',
-							fontWeight: 600,
-						}}
-					>
+					<ContextMenuLabel>
 						{ctxMenu.type === 'room'
 							? (rooms.find((r) => r.id === ctxMenu.id)?.name ?? '방')
 							: (furniture.find((f) => f.id === ctxMenu.id)?.label ?? '가구')}
-					</div>
+					</ContextMenuLabel>
 					{ctxMenu.type === 'furniture' && (
-						<button
+						<ContextMenuItem
 							type="button"
 							onClick={() => {
 								openDetail(ctxMenu.id);
 								setCtxMenu(null);
 							}}
-							style={menuItemStyle}
 						>
 							📂 상세 보기
-						</button>
+						</ContextMenuItem>
 					)}
-					<button
+					<ContextMenuDeleteItem
 						type="button"
 						onClick={() => {
 							if (ctxMenu.type === 'room') deleteRoom(ctxMenu.id);
 							else deleteFurniture(ctxMenu.id);
 							setCtxMenu(null);
 						}}
-						style={{ ...menuItemStyle, color: '#f87171' }}
 					>
 						🗑️ 삭제
-					</button>
-				</div>
+					</ContextMenuDeleteItem>
+				</ContextMenu>
 			)}
 
 			{/* Empty state */}
 			{rooms.length === 0 && !drawMode && (
-				<div
-					style={{
-						position: 'absolute',
-						inset: 0,
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						pointerEvents: 'none',
-					}}
-				>
-					<div style={{ textAlign: 'center', color: '#475569' }}>
-						<div style={{ fontSize: 48, marginBottom: 12 }}>🏠</div>
-						<div style={{ fontSize: 16 }}>방을 먼저 추가하세요</div>
-						<div style={{ fontSize: 13, marginTop: 4 }}>
+				<EmptyStateWrapper>
+					<EmptyStateInner>
+						<EmptyStateIcon>🏠</EmptyStateIcon>
+						<EmptyStateTitle>방을 먼저 추가하세요</EmptyStateTitle>
+						<EmptyStateSubtitle>
 							사이드바의 "방 추가" 버튼을 눌러보세요
-						</div>
-					</div>
-				</div>
+						</EmptyStateSubtitle>
+					</EmptyStateInner>
+				</EmptyStateWrapper>
 			)}
 
 			{/* Drawing hint */}
 			{drawMode && (
-				<div
-					style={{
-						position: 'absolute',
-						bottom: 56,
-						left: '50%',
-						transform: 'translateX(-50%)',
-						background: '#1e293b',
-						border: '1px solid #60a5fa',
-						borderRadius: 8,
-						padding: '8px 20px',
-						color: '#60a5fa',
-						fontSize: 13,
-						pointerEvents: 'none',
-					}}
-				>
+				<DrawingHint>
 					{drawRect
 						? '드래그해서 방 크기를 조절하세요'
 						: '드래그해서 방을 그려보세요 · ESC 취소'}
-				</div>
+				</DrawingHint>
 			)}
 
 			{/* Zoom controls */}
-			<div
-				style={{
-					position: 'absolute',
-					bottom: 16,
-					right: 16,
-					display: 'flex',
-					alignItems: 'center',
-					gap: 6,
-					background: '#1e293b',
-					border: '1px solid #334155',
-					borderRadius: 8,
-					padding: '4px 8px',
-				}}
-			>
-				<button
+			<ZoomControls>
+				<ZoomBtn
 					type="button"
 					onClick={() =>
 						setView((v) => ({
@@ -690,22 +651,12 @@ export default function Canvas({ width, height }: CanvasProps) {
 							scale: Math.max(SCALE_MIN, v.scale / SCALE_BY),
 						}))
 					}
-					style={zoomBtn}
 					title="축소"
 				>
 					−
-				</button>
-				<span
-					style={{
-						fontSize: 12,
-						color: '#94a3b8',
-						minWidth: 40,
-						textAlign: 'center',
-					}}
-				>
-					{Math.round(view.scale * 100)}%
-				</span>
-				<button
+				</ZoomBtn>
+				<ZoomLabel>{Math.round(view.scale * 100)}%</ZoomLabel>
+				<ZoomBtn
 					type="button"
 					onClick={() =>
 						setView((v) => ({
@@ -713,66 +664,22 @@ export default function Canvas({ width, height }: CanvasProps) {
 							scale: Math.min(SCALE_MAX, v.scale * SCALE_BY),
 						}))
 					}
-					style={zoomBtn}
 					title="확대"
 				>
 					＋
-				</button>
-				<div
-					style={{
-						width: 1,
-						height: 16,
-						background: '#334155',
-						margin: '0 2px',
-					}}
-				/>
-				<button
+				</ZoomBtn>
+				<ZoomDivider />
+				<ZoomResetBtn
 					type="button"
 					onClick={() => setView({ x: 0, y: 0, scale: 1 })}
-					style={{ ...zoomBtn, fontSize: 11, color: '#64748b' }}
 					title="뷰 초기화"
 				>
 					⊙
-				</button>
-			</div>
+				</ZoomResetBtn>
+			</ZoomControls>
 
 			{/* Pan hint */}
-			<div
-				style={{
-					position: 'absolute',
-					bottom: 16,
-					left: '50%',
-					transform: 'translateX(-50%)',
-					fontSize: 11,
-					color: '#334155',
-					pointerEvents: 'none',
-				}}
-			>
-				빈 공간 드래그로 이동
-			</div>
+			<PanHint>빈 공간 드래그로 이동</PanHint>
 		</>
 	);
 }
-
-const menuItemStyle: React.CSSProperties = {
-	display: 'block',
-	width: '100%',
-	padding: '9px 14px',
-	background: 'none',
-	border: 'none',
-	color: '#e2e8f0',
-	fontSize: 13,
-	cursor: 'pointer',
-	textAlign: 'left',
-};
-
-const zoomBtn: React.CSSProperties = {
-	background: 'none',
-	border: 'none',
-	color: '#94a3b8',
-	cursor: 'pointer',
-	fontSize: 16,
-	lineHeight: 1,
-	padding: '2px 4px',
-	borderRadius: 4,
-};

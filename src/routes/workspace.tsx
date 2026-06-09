@@ -4,6 +4,16 @@ import DetailPanel from '#/components/home-item-finder/DetailPanel';
 import SearchBar from '#/components/home-item-finder/SearchBar';
 import Sidebar from '#/components/home-item-finder/Sidebar';
 import { useHomeStore } from '#/store/useHomeStore';
+import {
+	CanvasArea,
+	CanvasLoadingFallback,
+	Header,
+	HeaderActions,
+	PageWrapper,
+	StyledHeaderBtn,
+	Toast,
+	WorkspaceBody,
+} from './workspace.styles';
 
 const Canvas = lazy(() => import('#/components/home-item-finder/Canvas'));
 
@@ -71,96 +81,36 @@ function RouteComponent() {
 	};
 
 	return (
-		<div
-			style={{
-				display: 'flex',
-				flexDirection: 'column',
-				height: '100vh',
-				background: '#0f172a',
-				color: '#f1f5f9',
-				fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-			}}
-		>
+		<PageWrapper>
 			{/* Header */}
-			<div
-				style={{
-					height: 52,
-					borderBottom: '1px solid #1e293b',
-					display: 'flex',
-					alignItems: 'center',
-					padding: '0 16px',
-					gap: 12,
-					flexShrink: 0,
-				}}
-			>
+			<Header>
 				<SearchBar />
-				<div style={{ display: 'flex', gap: 8, marginLeft: 'auto' }}>
+				<HeaderActions>
 					<HeaderBtn onClick={exportData}>내보내기</HeaderBtn>
 					<HeaderBtn onClick={handleImport}>가져오기</HeaderBtn>
 					<HeaderBtn onClick={handleClear} danger>
 						초기화
 					</HeaderBtn>
-				</div>
-			</div>
+				</HeaderActions>
+			</Header>
 
 			{/* Body */}
-			<div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+			<WorkspaceBody>
 				<Sidebar onAddRoom={handleAddRoom} toast={showToast} />
 
 				{/* Canvas Area */}
-				<div
-					ref={canvasWrapRef}
-					style={{
-						flex: 1,
-						position: 'relative',
-						overflow: 'hidden',
-						background: '#111827',
-					}}
-				>
-					<Suspense
-						fallback={
-							<div
-								style={{
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									height: '100%',
-									color: '#475569',
-								}}
-							>
-								불러오는 중...
-							</div>
-						}
-					>
+				<CanvasArea ref={canvasWrapRef}>
+					<Suspense fallback={<CanvasLoadingFallback>불러오는 중...</CanvasLoadingFallback>}>
 						<Canvas width={canvasSize.width} height={canvasSize.height} />
 					</Suspense>
-				</div>
+				</CanvasArea>
 
 				{detailFurnitureId && <DetailPanel />}
-			</div>
+			</WorkspaceBody>
 
 			{/* Toast */}
-			{toast && (
-				<div
-					style={{
-						position: 'fixed',
-						bottom: 32,
-						left: '50%',
-						transform: 'translateX(-50%)',
-						background: '#1e293b',
-						border: '1px solid #334155',
-						borderRadius: 8,
-						padding: '10px 20px',
-						color: '#f1f5f9',
-						fontSize: 13,
-						zIndex: 999,
-						boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
-					}}
-				>
-					{toast}
-				</div>
-			)}
-		</div>
+			{toast && <Toast>{toast}</Toast>}
+		</PageWrapper>
 	);
 }
 
@@ -174,20 +124,8 @@ function HeaderBtn({
 	danger?: boolean;
 }) {
 	return (
-		<button
-			type="button"
-			onClick={onClick}
-			style={{
-				padding: '5px 14px',
-				background: danger ? '#1f1010' : '#1e293b',
-				border: `1px solid ${danger ? '#7f1d1d' : '#334155'}`,
-				borderRadius: 7,
-				color: danger ? '#fca5a5' : '#94a3b8',
-				fontSize: 12,
-				cursor: 'pointer',
-			}}
-		>
+		<StyledHeaderBtn type="button" onClick={onClick} $danger={danger}>
 			{children}
-		</button>
+		</StyledHeaderBtn>
 	);
 }

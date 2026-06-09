@@ -1,5 +1,28 @@
 import { useRef, useState } from 'react';
 import { useHomeStore } from '#/store/useHomeStore';
+import {
+	AddRoomBtn,
+	DeleteRoomBtn,
+	EmptyRooms,
+	FurnitureBtn,
+	FurnitureBtnIcon,
+	FurnitureBtnLabel,
+	FurnitureGrid,
+	RoomBtn,
+	RoomDot,
+	RoomNameBtn,
+	RoomNameInput,
+	SectionContent,
+	SectionLabel,
+	SectionWrapper,
+	SelectedInfo,
+	SelectedInfoName,
+	SidebarBody,
+	SidebarContainer,
+	SidebarHeader,
+	SidebarSubtitle,
+	SidebarTitle,
+} from './Sidebar.styles';
 import type { FurnitureType } from './types';
 
 const FURNITURE_BUTTONS: {
@@ -49,111 +72,55 @@ export default function Sidebar({ onAddRoom, toast }: SidebarProps) {
 	const selectedRoom = rooms.find((r) => r.id === selectedRoomId);
 
 	return (
-		<div
-			style={{
-				width: 240,
-				flexShrink: 0,
-				background: '#0f172a',
-				borderRight: '1px solid #1e293b',
-				display: 'flex',
-				flexDirection: 'column',
-				height: '100%',
-				overflow: 'hidden',
-			}}
-		>
+		<SidebarContainer>
 			{/* Header */}
-			<div
-				style={{ padding: '16px 16px 12px', borderBottom: '1px solid #1e293b' }}
-			>
-				<div
-					style={{
-						fontSize: 15,
-						fontWeight: 700,
-						color: '#f1f5f9',
-						marginBottom: 2,
-					}}
-				>
-					🏠 집안 물건 찾기
-				</div>
-				<div style={{ fontSize: 11, color: '#64748b' }}>
-					물건 위치를 쉽게 관리하세요
-				</div>
-			</div>
+			<SidebarHeader>
+				<SidebarTitle>🏠 집안 물건 찾기</SidebarTitle>
+				<SidebarSubtitle>물건 위치를 쉽게 관리하세요</SidebarSubtitle>
+			</SidebarHeader>
 
-			<div style={{ flex: 1, overflowY: 'auto', padding: '12px 12px' }}>
+			<SidebarBody>
 				{/* Room Section */}
 				<Section label="방 목록">
-					<button type="button" onClick={onAddRoom} style={addBtn}>
+					<AddRoomBtn type="button" onClick={onAddRoom}>
 						+ 방 추가
-					</button>
-					{rooms.length === 0 && (
-						<div
-							style={{
-								fontSize: 12,
-								color: '#475569',
-								textAlign: 'center',
-								padding: '8px 0',
-							}}
-						>
-							방이 없습니다
-						</div>
-					)}
+					</AddRoomBtn>
+					{rooms.length === 0 && <EmptyRooms>방이 없습니다</EmptyRooms>}
 					{rooms.map((room) => (
-						<button
+						<RoomBtn
 							key={room.id}
 							type="button"
 							onClick={() => selectRoom(room.id)}
-							style={{
-								...roomBtn,
-								background: room.id === selectedRoomId ? '#1e3a5f' : '#1e293b',
-								borderColor: room.id === selectedRoomId ? '#60a5fa' : '#334155',
-								color: room.id === selectedRoomId ? '#60a5fa' : '#cbd5e1',
-							}}
+							$selected={room.id === selectedRoomId}
 						>
-							<span
-								style={{
-									width: 8,
-									height: 8,
-									borderRadius: '50%',
-									background: room.color.replace('0.35', '0.8'),
-									display: 'inline-block',
-									flexShrink: 0,
-								}}
-							/>
+							<RoomDot $color={room.color.replace('0.35', '0.8')} />
 							{room.name}
-						</button>
+						</RoomBtn>
 					))}
 				</Section>
 
 				{/* Furniture Section */}
 				<Section label="가구 추가">
-					<div
-						style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}
-					>
+					<FurnitureGrid>
 						{FURNITURE_BUTTONS.map((btn) => (
-							<button
+							<FurnitureBtn
 								key={btn.type}
 								type="button"
 								onClick={() => handleAddFurniture(btn.type)}
-								style={furnitureBtn}
 							>
-								<span style={{ fontSize: 18 }}>{btn.icon}</span>
-								<span style={{ fontSize: 11 }}>{btn.label}</span>
-							</button>
+								<FurnitureBtnIcon>{btn.icon}</FurnitureBtnIcon>
+								<FurnitureBtnLabel>{btn.label}</FurnitureBtnLabel>
+							</FurnitureBtn>
 						))}
-					</div>
+					</FurnitureGrid>
 				</Section>
 
 				{/* Selected Info */}
 				{(selectedFurniture || selectedRoom) && (
 					<Section label="선택 정보">
 						{selectedFurniture ? (
-							<div style={{ fontSize: 12, color: '#94a3b8' }}>
-								<div
-									style={{ color: '#f1f5f9', fontWeight: 600, marginBottom: 4 }}
-								>
-									{selectedFurniture.label}
-								</div>
+							<SelectedInfo>
+								<SelectedInfoName>{selectedFurniture.label}</SelectedInfoName>
 								<div>
 									위치: ({Math.round(selectedFurniture.x)},{' '}
 									{Math.round(selectedFurniture.y)})
@@ -174,26 +141,14 @@ export default function Sidebar({ onAddRoom, toast }: SidebarProps) {
 									)}
 									개
 								</div>
-							</div>
+							</SelectedInfo>
 						) : selectedRoom ? (
-							<div style={{ fontSize: 12, color: '#94a3b8' }}>
+							<SelectedInfo>
 								{editingRoomName ? (
-									<input
+									<RoomNameInput
 										// biome-ignore lint/a11y/noAutofocus: 이름 편집 시 즉시 포커스
 										autoFocus
 										defaultValue={selectedRoom.name}
-										style={{
-											width: '100%',
-											background: '#0f172a',
-											border: '1px solid #60a5fa',
-											borderRadius: 5,
-											padding: '3px 7px',
-											color: '#f1f5f9',
-											fontSize: 13,
-											fontWeight: 600,
-											marginBottom: 4,
-											boxSizing: 'border-box',
-										}}
 										onBlur={(e) => {
 											const val = e.target.value.trim();
 											if (val) updateRoom(selectedRoom.id, { name: val });
@@ -207,26 +162,13 @@ export default function Sidebar({ onAddRoom, toast }: SidebarProps) {
 										}}
 									/>
 								) : (
-									<button
+									<RoomNameBtn
 										type="button"
 										onClick={() => setEditingRoomName(true)}
-										style={{
-											display: 'block',
-											width: '100%',
-											background: 'none',
-											border: 'none',
-											padding: '3px 0',
-											color: '#f1f5f9',
-											fontWeight: 600,
-											fontSize: 13,
-											cursor: 'text',
-											textAlign: 'left',
-											marginBottom: 4,
-										}}
 										title="클릭해서 이름 편집"
 									>
 										{selectedRoom.name} ✏️
-									</button>
+									</RoomNameBtn>
 								)}
 								<div>
 									크기: {Math.round(selectedRoom.width)} ×{' '}
@@ -237,22 +179,21 @@ export default function Sidebar({ onAddRoom, toast }: SidebarProps) {
 									{furniture.filter((f) => f.roomId === selectedRoom.id).length}
 									개
 								</div>
-								<button
+								<DeleteRoomBtn
 									type="button"
 									onClick={() => {
 										if (window.confirm(`"${selectedRoom.name}"을(를) 삭제할까요?\n방 안의 가구와 아이템도 모두 삭제됩니다.`))
 											deleteRoom(selectedRoom.id);
 									}}
-									style={deleteBtn}
 								>
 									🗑️ 방 삭제
-								</button>
-							</div>
+								</DeleteRoomBtn>
+							</SelectedInfo>
 						) : null}
 					</Section>
 				)}
-			</div>
-		</div>
+			</SidebarBody>
+		</SidebarContainer>
 	);
 }
 
@@ -264,75 +205,9 @@ function Section({
 	children: React.ReactNode;
 }) {
 	return (
-		<div style={{ marginBottom: 16 }}>
-			<div
-				style={{
-					fontSize: 10,
-					fontWeight: 700,
-					color: '#475569',
-					textTransform: 'uppercase',
-					letterSpacing: '0.1em',
-					marginBottom: 8,
-					paddingLeft: 4,
-				}}
-			>
-				{label}
-			</div>
-			<div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-				{children}
-			</div>
-		</div>
+		<SectionWrapper>
+			<SectionLabel>{label}</SectionLabel>
+			<SectionContent>{children}</SectionContent>
+		</SectionWrapper>
 	);
 }
-
-const addBtn: React.CSSProperties = {
-	width: '100%',
-	padding: '8px 12px',
-	background: '#1e3a5f',
-	border: '1px dashed #60a5fa',
-	borderRadius: 8,
-	color: '#60a5fa',
-	fontSize: 12,
-	cursor: 'pointer',
-	textAlign: 'center',
-};
-
-const roomBtn: React.CSSProperties = {
-	width: '100%',
-	padding: '7px 10px',
-	border: '1px solid',
-	borderRadius: 8,
-	fontSize: 12,
-	cursor: 'pointer',
-	textAlign: 'left',
-	display: 'flex',
-	alignItems: 'center',
-	gap: 8,
-};
-
-const deleteBtn: React.CSSProperties = {
-	marginTop: 8,
-	width: '100%',
-	padding: '6px 10px',
-	background: 'none',
-	border: '1px solid #7f1d1d',
-	borderRadius: 7,
-	color: '#f87171',
-	fontSize: 11,
-	cursor: 'pointer',
-	textAlign: 'center',
-};
-
-const furnitureBtn: React.CSSProperties = {
-	padding: '10px 8px',
-	background: '#1e293b',
-	border: '1px solid #334155',
-	borderRadius: 8,
-	color: '#cbd5e1',
-	fontSize: 12,
-	cursor: 'pointer',
-	display: 'flex',
-	flexDirection: 'column',
-	alignItems: 'center',
-	gap: 4,
-};

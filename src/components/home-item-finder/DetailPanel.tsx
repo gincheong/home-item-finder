@@ -1,5 +1,39 @@
 import { useRef, useState } from 'react';
 import { useHomeStore } from '#/store/useHomeStore';
+import {
+	AddDrawerBtn,
+	AddItemBtn,
+	AddItemInput,
+	AddItemRow,
+	DragHandle,
+	DrawerCardWrapper,
+	DrawerDeleteBtn,
+	DrawerHeader,
+	DrawerLabelInput,
+	DrawerList,
+	ItemCount,
+	ItemDoneBtn,
+	ItemEditBtn,
+	ItemEditForm,
+	ItemInput,
+	ItemMemo,
+	ItemMemoInput,
+	ItemName,
+	ItemRow,
+	ItemRowDeleteBtn,
+	ItemTagInput,
+	ItemWrapper,
+	ItemsContainer,
+	PanelCloseBtn,
+	PanelContainer,
+	PanelDeleteBtn,
+	PanelHeader,
+	PanelLabelInput,
+	SectionLabel,
+	Tag,
+	TagList,
+	ToggleBtn,
+} from './DetailPanel.styles';
 import type { Drawer } from './types';
 
 export default function DetailPanel() {
@@ -76,92 +110,33 @@ export default function DetailPanel() {
 	const sortedDrawers = [...f.drawers].sort((a, b) => a.order - b.order);
 
 	return (
-		<div
-			style={{
-				width: 360,
-				flexShrink: 0,
-				background: '#0f172a',
-				borderLeft: '1px solid #1e293b',
-				display: 'flex',
-				flexDirection: 'column',
-				height: '100%',
-				overflow: 'hidden',
-			}}
-		>
+		<PanelContainer>
 			{/* Header */}
-			<div
-				style={{
-					padding: '16px',
-					borderBottom: '1px solid #1e293b',
-					display: 'flex',
-					alignItems: 'center',
-					gap: 8,
-				}}
-			>
-				<input
+			<PanelHeader>
+				<PanelLabelInput
 					value={f.label}
 					onChange={(e) => handleLabelChange(e.target.value)}
-					style={{
-						flex: 1,
-						background: 'transparent',
-						border: 'none',
-						borderBottom: '1px solid #334155',
-						color: '#f1f5f9',
-						fontSize: 16,
-						fontWeight: 700,
-						padding: '4px 0',
-						outline: 'none',
-					}}
 				/>
-				<button
+				<PanelDeleteBtn
 					type="button"
 					onClick={() => {
 						if (window.confirm(`"${f.label}"을(를) 삭제할까요?\n안에 있는 서랍과 아이템도 모두 삭제됩니다.`))
 							deleteFurniture(f.id);
 					}}
-					style={{
-						background: 'none',
-						border: '1px solid #7f1d1d',
-						borderRadius: 6,
-						color: '#f87171',
-						cursor: 'pointer',
-						fontSize: 12,
-						padding: '4px 8px',
-					}}
 				>
 					🗑️ 삭제
-				</button>
-				<button
+				</PanelDeleteBtn>
+				<PanelCloseBtn
 					type="button"
 					onClick={() => openDetail(null)}
-					style={{
-						background: 'none',
-						border: 'none',
-						color: '#64748b',
-						cursor: 'pointer',
-						fontSize: 18,
-						padding: 4,
-					}}
 				>
 					✕
-				</button>
-			</div>
+				</PanelCloseBtn>
+			</PanelHeader>
 
 			{/* Drawer List */}
-			<div style={{ flex: 1, overflowY: 'auto', padding: 12 }}>
-				<div
-					style={{
-						fontSize: 10,
-						fontWeight: 700,
-						color: '#475569',
-						textTransform: 'uppercase',
-						letterSpacing: '0.1em',
-						marginBottom: 8,
-						paddingLeft: 4,
-					}}
-				>
-					서랍 목록
-				</div>
+			<DrawerList>
+				<SectionLabel>서랍 목록</SectionLabel>
 
 				{sortedDrawers.map((drawer) => (
 					<DrawerCard
@@ -192,25 +167,14 @@ export default function DetailPanel() {
 					/>
 				))}
 
-				<button
+				<AddDrawerBtn
 					type="button"
 					onClick={() => addDrawer(f.id)}
-					style={{
-						width: '100%',
-						marginTop: 8,
-						padding: '10px',
-						background: 'transparent',
-						border: '1px dashed #334155',
-						borderRadius: 8,
-						color: '#64748b',
-						fontSize: 12,
-						cursor: 'pointer',
-					}}
 				>
 					+ 서랍 추가
-				</button>
-			</div>
-		</div>
+				</AddDrawerBtn>
+			</DrawerList>
+		</PanelContainer>
 	);
 }
 
@@ -257,7 +221,8 @@ function DrawerCard({
 }: DrawerCardProps) {
 	return (
 		// biome-ignore lint/a11y/noStaticElementInteractions: drag-and-drop reorder UI
-		<div
+		<DrawerCardWrapper
+			$dragging={dragging}
 			draggable
 			onDragStart={onDragStart}
 			onDragOver={(e) => {
@@ -265,102 +230,46 @@ function DrawerCard({
 				onDragOver();
 			}}
 			onDrop={onDrop}
-			style={{
-				marginBottom: 6,
-				background: '#1e293b',
-				border: `1px solid ${dragging ? '#60a5fa' : '#334155'}`,
-				borderRadius: 8,
-				opacity: dragging ? 0.5 : 1,
-			}}
 		>
 			{/* Drawer Header */}
-			<div
-				style={{
-					display: 'flex',
-					alignItems: 'center',
-					padding: '10px 12px',
-					gap: 8,
-				}}
-			>
-				<span style={{ color: '#475569', cursor: 'grab', fontSize: 14 }}>
-					⠿
-				</span>
-				<input
+			<DrawerHeader>
+				<DragHandle>⠿</DragHandle>
+				<DrawerLabelInput
 					value={drawer.label}
 					onChange={(e) => onLabelChange(e.target.value)}
 					onClick={(e) => e.stopPropagation()}
-					style={{
-						flex: 1,
-						background: 'transparent',
-						border: 'none',
-						color: '#e2e8f0',
-						fontSize: 13,
-						fontWeight: 600,
-						outline: 'none',
-					}}
 				/>
-				<span style={{ fontSize: 11, color: '#64748b', marginRight: 4 }}>
-					{drawer.items.length}개
-				</span>
-				<button
-					type="button"
-					onClick={onToggle}
-					style={{
-						background: 'none',
-						border: 'none',
-						color: '#94a3b8',
-						cursor: 'pointer',
-						fontSize: 12,
-					}}
-				>
+				<ItemCount>{drawer.items.length}개</ItemCount>
+				<ToggleBtn type="button" onClick={onToggle}>
 					{expanded ? '▲' : '▼'}
-				</button>
-				<button
-					type="button"
-					onClick={onDelete}
-					style={{
-						background: 'none',
-						border: 'none',
-						color: '#64748b',
-						cursor: 'pointer',
-						fontSize: 14,
-					}}
-				>
+				</ToggleBtn>
+				<DrawerDeleteBtn type="button" onClick={onDelete}>
 					✕
-				</button>
-			</div>
+				</DrawerDeleteBtn>
+			</DrawerHeader>
 
 			{/* Items */}
 			{expanded && (
-				<div style={{ borderTop: '1px solid #334155', padding: '8px 12px' }}>
+				<ItemsContainer>
 					{drawer.items.map((item) => (
-						<div key={item.id} style={{ marginBottom: 6 }}>
+						<ItemWrapper key={item.id}>
 							{editingItem === item.id ? (
-								<div
-									style={{
-										background: '#0f172a',
-										borderRadius: 6,
-										padding: 10,
-										border: '1px solid #334155',
-									}}
-								>
-									<input
+								<ItemEditForm>
+									<ItemInput
 										value={item.name}
 										onChange={(e) =>
 											onUpdateItem(item.id, { name: e.target.value })
 										}
-										style={itemInput}
 										placeholder="이름"
 									/>
-									<input
+									<ItemMemoInput
 										value={item.memo}
 										onChange={(e) =>
 											onUpdateItem(item.id, { memo: e.target.value })
 										}
-										style={{ ...itemInput, marginTop: 6, color: '#94a3b8' }}
 										placeholder="메모"
 									/>
-									<input
+									<ItemTagInput
 										value={item.tags.join(', ')}
 										onChange={(e) =>
 											onUpdateItem(item.id, {
@@ -370,162 +279,58 @@ function DrawerCard({
 													.filter(Boolean),
 											})
 										}
-										style={{
-											...itemInput,
-											marginTop: 6,
-											color: '#60a5fa',
-											fontSize: 11,
-										}}
 										placeholder="태그 (쉼표로 구분)"
 									/>
-									<button
+									<ItemDoneBtn
 										type="button"
 										onClick={() => setEditingItem(null)}
-										style={{
-											marginTop: 8,
-											padding: '4px 12px',
-											background: '#1e3a5f',
-											border: '1px solid #60a5fa',
-											borderRadius: 6,
-											color: '#60a5fa',
-											fontSize: 11,
-											cursor: 'pointer',
-										}}
 									>
 										완료
-									</button>
-								</div>
+									</ItemDoneBtn>
+								</ItemEditForm>
 							) : (
-								<div
-									style={{
-										display: 'flex',
-										alignItems: 'center',
-										gap: 6,
-										borderRadius: 6,
-										background: '#0f172a',
-									}}
-								>
-									<button
+								<ItemRow>
+									<ItemEditBtn
 										type="button"
 										onClick={() => setEditingItem(item.id)}
-										style={{
-											flex: 1,
-											background: 'none',
-											border: 'none',
-											textAlign: 'left',
-											padding: '6px 8px',
-											cursor: 'pointer',
-											borderRadius: 6,
-										}}
 									>
-										<div style={{ flex: 1 }}>
-											<div style={{ fontSize: 13, color: '#e2e8f0' }}>
-												{item.name}
-											</div>
-											{item.memo && (
-												<div
-													style={{
-														fontSize: 11,
-														color: '#64748b',
-														marginTop: 2,
-													}}
-												>
-													{item.memo}
-												</div>
-											)}
-											{item.tags.length > 0 && (
-												<div
-													style={{
-														display: 'flex',
-														gap: 4,
-														marginTop: 4,
-														flexWrap: 'wrap',
-													}}
-												>
-													{item.tags.map((tag) => (
-														<span
-															key={tag}
-															style={{
-																fontSize: 10,
-																padding: '1px 6px',
-																background: '#1e3a5f',
-																color: '#60a5fa',
-																borderRadius: 4,
-															}}
-														>
-															{tag}
-														</span>
-													))}
-												</div>
-											)}
-										</div>
-									</button>
-									<button
+										<ItemName>{item.name}</ItemName>
+										{item.memo && <ItemMemo>{item.memo}</ItemMemo>}
+										{item.tags.length > 0 && (
+											<TagList>
+												{item.tags.map((tag) => (
+													<Tag key={tag}>{tag}</Tag>
+												))}
+											</TagList>
+										)}
+									</ItemEditBtn>
+									<ItemRowDeleteBtn
 										type="button"
 										onClick={() => onDeleteItem(item.id)}
-										style={{
-											background: 'none',
-											border: 'none',
-											color: '#475569',
-											cursor: 'pointer',
-											fontSize: 13,
-											padding: '0 8px',
-										}}
 									>
 										✕
-									</button>
-								</div>
+									</ItemRowDeleteBtn>
+								</ItemRow>
 							)}
-						</div>
+						</ItemWrapper>
 					))}
 
 					{/* Add Item */}
-					<div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
-						<input
+					<AddItemRow>
+						<AddItemInput
 							value={newItemInput}
 							onChange={(e) => onNewItemChange(e.target.value)}
 							onKeyDown={(e) => {
 								if (e.key === 'Enter' && !e.nativeEvent.isComposing) onAddItem();
 							}}
 							placeholder="아이템 이름 입력"
-							style={{
-								...itemInput,
-								flex: 1,
-								padding: '6px 10px',
-								borderRadius: 6,
-								border: '1px solid #334155',
-							}}
 						/>
-						<button
-							type="button"
-							onClick={onAddItem}
-							style={{
-								padding: '6px 12px',
-								background: '#1e3a5f',
-								border: '1px solid #60a5fa',
-								borderRadius: 6,
-								color: '#60a5fa',
-								fontSize: 12,
-								cursor: 'pointer',
-							}}
-						>
+						<AddItemBtn type="button" onClick={onAddItem}>
 							추가
-						</button>
-					</div>
-				</div>
+						</AddItemBtn>
+					</AddItemRow>
+				</ItemsContainer>
 			)}
-		</div>
+		</DrawerCardWrapper>
 	);
 }
-
-const itemInput: React.CSSProperties = {
-	width: '100%',
-	background: 'transparent',
-	border: 'none',
-	borderBottom: '1px solid #334155',
-	color: '#e2e8f0',
-	fontSize: 13,
-	padding: '4px 0',
-	outline: 'none',
-	boxSizing: 'border-box',
-};
