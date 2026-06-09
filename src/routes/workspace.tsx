@@ -7,7 +7,7 @@ import { useHomeStore } from '#/store/useHomeStore';
 
 const Canvas = lazy(() => import('#/components/home-item-finder/Canvas'));
 
-export const Route = createFileRoute('/home-item-finder')({
+export const Route = createFileRoute('/workspace')({
 	component: RouteComponent,
 });
 
