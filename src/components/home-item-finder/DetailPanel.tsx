@@ -466,7 +466,7 @@ function DrawerCard({
 							value={newItemInput}
 							onChange={(e) => onNewItemChange(e.target.value)}
 							onKeyDown={(e) => {
-								if (e.key === 'Enter') onAddItem();
+								if (e.key === 'Enter' && !e.nativeEvent.isComposing) onAddItem();
 							}}
 							placeholder="아이템 이름 입력"
 							style={{
