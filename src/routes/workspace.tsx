@@ -24,7 +24,7 @@ import {
 	StyledHeaderBtn,
 	Toast,
 	WorkspaceBody,
-} from './workspace.styles';
+} from './-workspace.styles';
 
 const Canvas = lazy(() => import('#/components/home-item-finder/Canvas'));
 
