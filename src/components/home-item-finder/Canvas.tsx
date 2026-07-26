@@ -250,7 +250,11 @@ export default function Canvas({ width, height }: CanvasProps) {
 		const screenPos = stageRef.current?.getPointerPosition();
 		if (!screenPos) return;
 		const worldPos = toWorld(screenPos);
-		setDrawRect((d) => (d ? { ...d, current: worldPos } : null));
+		setDrawRect((d) =>
+			d
+				? { ...d, current: { x: snap(worldPos.x), y: snap(worldPos.y) } }
+				: null,
+		);
 	};
 
 	const handleMouseUp = () => {
@@ -397,10 +401,13 @@ export default function Canvas({ width, height }: CanvasProps) {
 									node.scaleX(1);
 									node.scaleY(1);
 									updateRoom(room.id, {
-										x: node.x(),
-										y: node.y(),
-										width: Math.max(MIN_SIZE, room.width * Math.abs(sx)),
-										height: Math.max(MIN_SIZE, room.height * Math.abs(sy)),
+										x: snap(node.x()),
+										y: snap(node.y()),
+										width: Math.max(MIN_SIZE, snap(room.width * Math.abs(sx))),
+										height: Math.max(
+											MIN_SIZE,
+											snap(room.height * Math.abs(sy)),
+										),
 									});
 								}}
 							>
@@ -491,10 +498,10 @@ export default function Canvas({ width, height }: CanvasProps) {
 									node.scaleY(1);
 
 									const room = rooms.find((r) => r.id === f.roomId);
-									let newW = Math.max(40, f.width * Math.abs(sx));
-									let newH = Math.max(30, f.height * Math.abs(sy));
-									let newX = node.x();
-									let newY = node.y();
+									let newW = Math.max(40, snap(f.width * Math.abs(sx)));
+									let newH = Math.max(20, snap(f.height * Math.abs(sy)));
+									let newX = snap(node.x());
+									let newY = snap(node.y());
 
 									if (room) {
 										newW = Math.min(newW, room.width);
@@ -521,9 +528,21 @@ export default function Canvas({ width, height }: CanvasProps) {
 									width={f.width}
 									height={f.height}
 									fill={color}
-									stroke={highlighted ? '#34d399' : selected ? '#60a5fa' : 'rgba(255,255,255,0.12)'}
+									stroke={
+										highlighted
+											? '#34d399'
+											: selected
+												? '#60a5fa'
+												: 'rgba(255,255,255,0.12)'
+									}
 									strokeWidth={highlighted || selected ? 3 : 1}
-									shadowColor={highlighted ? '#34d399' : selected ? '#60a5fa' : 'transparent'}
+									shadowColor={
+										highlighted
+											? '#34d399'
+											: selected
+												? '#60a5fa'
+												: 'transparent'
+									}
 									shadowBlur={highlighted ? 20 : selected ? 16 : 0}
 									cornerRadius={5}
 									opacity={0.92}

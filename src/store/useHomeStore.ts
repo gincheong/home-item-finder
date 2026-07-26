@@ -22,10 +22,13 @@ const FURNITURE_DEFAULTS: Record<
 	{ label: string; width: number; height: number }
 > = {
 	dresser: { label: '서랍장', width: 100, height: 60 },
-	wardrobe: { label: '옷장', width: 120, height: 70 },
-	shelf: { label: '선반', width: 130, height: 40 },
+	wardrobe: { label: '옷장', width: 120, height: 80 },
+	shelf: { label: '선반', width: 120, height: 40 },
 	custom: { label: '가구', width: 100, height: 80 },
 };
+
+const GRID_SIZE = 20;
+const snap = (v: number) => Math.round(v / GRID_SIZE) * GRID_SIZE;
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -194,8 +197,8 @@ export const useHomeStore = create<HomeStore>()(
 						roomId: selectedRoomId,
 						label: defaults.label,
 						type,
-						x: cx - defaults.width / 2,
-						y: cy - defaults.height / 2,
+						x: snap(cx - defaults.width / 2),
+						y: snap(cy - defaults.height / 2),
 						width: defaults.width,
 						height: defaults.height,
 						drawers: [],
@@ -228,8 +231,13 @@ export const useHomeStore = create<HomeStore>()(
 				},
 
 				selectFurniture: (id) => {
-					const roomId = id ? get().furniture.find((f) => f.id === id)?.roomId : undefined;
-					set({ selectedFurnitureId: id, ...(roomId ? { selectedRoomId: roomId } : {}) });
+					const roomId = id
+						? get().furniture.find((f) => f.id === id)?.roomId
+						: undefined;
+					set({
+						selectedFurnitureId: id,
+						...(roomId ? { selectedRoomId: roomId } : {}),
+					});
 				},
 
 				openDetail: (id) => set({ detailFurnitureId: id }),
@@ -341,15 +349,25 @@ export const useHomeStore = create<HomeStore>()(
 								...f,
 								drawers: f.drawers.map((d) => {
 									if (d.id !== drawerId) return d;
-									return { ...d, items: d.items.filter((i) => i.id !== itemId) };
+									return {
+										...d,
+										items: d.items.filter((i) => i.id !== itemId),
+									};
 								}),
 							};
 						}),
 					}));
 				},
 
-				moveItem: (fromFurnitureId, fromDrawerId, itemId, toFurnitureId, toDrawerId) => {
-					if (fromFurnitureId === toFurnitureId && fromDrawerId === toDrawerId) return;
+				moveItem: (
+					fromFurnitureId,
+					fromDrawerId,
+					itemId,
+					toFurnitureId,
+					toDrawerId,
+				) => {
+					if (fromFurnitureId === toFurnitureId && fromDrawerId === toDrawerId)
+						return;
 					saveSnapshot();
 					set((s) => {
 						let movedItem: Item | null = null;
@@ -362,7 +380,10 @@ export const useHomeStore = create<HomeStore>()(
 									if (d.id !== fromDrawerId) return d;
 									const found = d.items.find((i) => i.id === itemId);
 									if (found) movedItem = found;
-									return { ...d, items: d.items.filter((i) => i.id !== itemId) };
+									return {
+										...d,
+										items: d.items.filter((i) => i.id !== itemId),
+									};
 								}),
 							};
 						});
@@ -475,7 +496,10 @@ export const useHomeStore = create<HomeStore>()(
 		},
 		{
 			name: 'home-finder-data',
-			partialize: (state) => ({ rooms: state.rooms, furniture: state.furniture }),
+			partialize: (state) => ({
+				rooms: state.rooms,
+				furniture: state.furniture,
+			}),
 		},
 	),
 );
