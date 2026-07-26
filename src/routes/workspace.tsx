@@ -39,8 +39,14 @@ function RouteComponent() {
 	const [showHelp, setShowHelp] = useState(false);
 	const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-	const { detailFurnitureId, exportData, importData, clearData, _past, _future } =
-		useHomeStore();
+	const {
+		detailFurnitureId,
+		exportData,
+		importData,
+		clearData,
+		_past,
+		_future,
+	} = useHomeStore();
 
 	const showToast = (msg: string) => {
 		setToast(msg);
@@ -133,7 +139,11 @@ function RouteComponent() {
 					<HeaderBtn onClick={handleClear} danger>
 						초기화
 					</HeaderBtn>
-					<HelpBtn type="button" onClick={() => setShowHelp(true)} title="사용 방법">
+					<HelpBtn
+						type="button"
+						onClick={() => setShowHelp(true)}
+						title="사용 방법"
+					>
 						?
 					</HelpBtn>
 				</HeaderActions>
@@ -145,7 +155,11 @@ function RouteComponent() {
 
 				{/* Canvas Area */}
 				<CanvasArea ref={canvasWrapRef}>
-					<Suspense fallback={<CanvasLoadingFallback>불러오는 중...</CanvasLoadingFallback>}>
+					<Suspense
+						fallback={
+							<CanvasLoadingFallback>불러오는 중...</CanvasLoadingFallback>
+						}
+					>
 						<Canvas width={canvasSize.width} height={canvasSize.height} />
 					</Suspense>
 				</CanvasArea>
@@ -158,11 +172,7 @@ function RouteComponent() {
 
 			{/* Help Modal */}
 			{showHelp && (
-				// biome-ignore lint/a11y/noStaticElementInteractions: overlay click to dismiss
-				// biome-ignore lint/a11y/useKeyWithClickEvents: overlay dismiss does not need keyboard equivalent
 				<HelpOverlay onClick={() => setShowHelp(false)}>
-					{/* biome-ignore lint/a11y/noStaticElementInteractions: prevent overlay close on modal click */}
-					{/* biome-ignore lint/a11y/useKeyWithClickEvents: modal content does not need keyboard close */}
 					<HelpModal onClick={(e) => e.stopPropagation()}>
 						<HelpModalHeader>
 							<HelpModalTitle>🏠 사용 방법</HelpModalTitle>
@@ -176,8 +186,9 @@ function RouteComponent() {
 							<HelpStepBody>
 								<HelpStepTitle>방 그리기</HelpStepTitle>
 								<HelpStepDesc>
-									사이드바의 "+ 방 추가" 버튼을 누른 뒤, 캔버스 위에서 드래그해 방 크기를 정하세요.
-									방 이름은 사이드바에서 클릭해 바로 수정할 수 있어요.
+									사이드바의 "+ 방 추가" 버튼을 누른 뒤, 캔버스 위에서 드래그해
+									방 크기를 정하세요. 방 이름은 사이드바에서 클릭해 바로 수정할
+									수 있어요.
 								</HelpStepDesc>
 							</HelpStepBody>
 						</HelpStep>
@@ -187,9 +198,10 @@ function RouteComponent() {
 							<HelpStepBody>
 								<HelpStepTitle>가구 배치</HelpStepTitle>
 								<HelpStepDesc>
-									방을 선택한 뒤 사이드바의 가구 버튼을 눌러 추가하세요.
-									가구는 드래그로 이동하고, 핸들을 잡아 크기와 회전도 바꿀 수 있어요.
-									방 경계 밖으로는 벗어나지 않고, 방을 옮기면 가구도 함께 이동해요.
+									방을 선택한 뒤 사이드바의 가구 버튼을 눌러 추가하세요. 가구는
+									드래그로 이동하고, 핸들을 잡아 크기와 회전도 바꿀 수 있어요.
+									방 경계 밖으로는 벗어나지 않고, 방을 옮기면 가구도 함께
+									이동해요.
 								</HelpStepDesc>
 							</HelpStepBody>
 						</HelpStep>
@@ -199,9 +211,9 @@ function RouteComponent() {
 							<HelpStepBody>
 								<HelpStepTitle>물건 등록</HelpStepTitle>
 								<HelpStepDesc>
-									가구를 클릭하면 오른쪽에 상세 패널이 열려요.
-									서랍을 추가하고, 서랍마다 물건 이름·메모·태그를 기록하세요.
-									서랍은 드래그로 순서를 바꿀 수 있어요.
+									가구를 클릭하면 오른쪽에 상세 패널이 열려요. 서랍을 추가하고,
+									서랍마다 물건 이름·메모·태그를 기록하세요. 서랍은 드래그로
+									순서를 바꿀 수 있어요.
 								</HelpStepDesc>
 							</HelpStepBody>
 						</HelpStep>
@@ -211,8 +223,8 @@ function RouteComponent() {
 							<HelpStepBody>
 								<HelpStepTitle>물건 찾기</HelpStepTitle>
 								<HelpStepDesc>
-									상단 검색창에 물건 이름, 메모, 태그를 입력하면
-									몇 번 방 → 어떤 가구 → 어떤 서랍에 있는지 바로 알려줘요.
+									상단 검색창에 물건 이름, 메모, 태그를 입력하면 몇 번 방 → 어떤
+									가구 → 어떤 서랍에 있는지 바로 알려줘요.
 								</HelpStepDesc>
 							</HelpStepBody>
 						</HelpStep>
@@ -222,8 +234,9 @@ function RouteComponent() {
 							<HelpStepBody>
 								<HelpStepTitle>삭제</HelpStepTitle>
 								<HelpStepDesc>
-									방과 가구는 우클릭 컨텍스트 메뉴로 삭제할 수 있어요.
-									방은 사이드바 하단, 가구는 상세 패널 상단의 삭제 버튼으로도 지울 수 있어요.
+									방과 가구는 우클릭 컨텍스트 메뉴로 삭제할 수 있어요. 방은
+									사이드바 하단, 가구는 상세 패널 상단의 삭제 버튼으로도 지울 수
+									있어요.
 								</HelpStepDesc>
 							</HelpStepBody>
 						</HelpStep>
@@ -233,8 +246,8 @@ function RouteComponent() {
 							<HelpStepBody>
 								<HelpStepTitle>데이터 백업</HelpStepTitle>
 								<HelpStepDesc>
-									데이터는 브라우저에 자동 저장돼요.
-									"내보내기"로 JSON 파일을 저장하고, "가져오기"로 다시 불러올 수 있어요.
+									데이터는 브라우저에 자동 저장돼요. "내보내기"로 JSON 파일을
+									저장하고, "가져오기"로 다시 불러올 수 있어요.
 								</HelpStepDesc>
 							</HelpStepBody>
 						</HelpStep>
@@ -259,7 +272,13 @@ function HeaderBtn({
 	title?: string;
 }) {
 	return (
-		<StyledHeaderBtn type="button" onClick={onClick} $danger={danger} disabled={disabled} title={title}>
+		<StyledHeaderBtn
+			type="button"
+			onClick={onClick}
+			$danger={danger}
+			disabled={disabled}
+			title={title}
+		>
 			{children}
 		</StyledHeaderBtn>
 	);

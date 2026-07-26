@@ -21,9 +21,9 @@ import {
 	ItemName,
 	ItemRow,
 	ItemRowDeleteBtn,
+	ItemsContainer,
 	ItemTagInput,
 	ItemWrapper,
-	ItemsContainer,
 	MoveBtn,
 	MoveRow,
 	MoveSection,
@@ -126,16 +126,17 @@ export default function DetailPanel() {
 				<PanelDeleteBtn
 					type="button"
 					onClick={() => {
-						if (window.confirm(`"${f.label}"을(를) 삭제할까요?\n안에 있는 서랍과 아이템도 모두 삭제됩니다.`))
+						if (
+							window.confirm(
+								`"${f.label}"을(를) 삭제할까요?\n안에 있는 서랍과 아이템도 모두 삭제됩니다.`,
+							)
+						)
 							deleteFurniture(f.id);
 					}}
 				>
 					🗑️ 삭제
 				</PanelDeleteBtn>
-				<PanelCloseBtn
-					type="button"
-					onClick={() => openDetail(null)}
-				>
+				<PanelCloseBtn type="button" onClick={() => openDetail(null)}>
 					✕
 				</PanelCloseBtn>
 			</PanelHeader>
@@ -177,10 +178,7 @@ export default function DetailPanel() {
 					/>
 				))}
 
-				<AddDrawerBtn
-					type="button"
-					onClick={() => addDrawer(f.id)}
-				>
+				<AddDrawerBtn type="button" onClick={() => addDrawer(f.id)}>
 					+ 서랍 추가
 				</AddDrawerBtn>
 			</DrawerList>
@@ -205,7 +203,11 @@ interface DrawerCardProps {
 		updates: { name?: string; memo?: string; tags?: string[] },
 	) => void;
 	onDeleteItem: (itemId: string) => void;
-	onMoveItem: (itemId: string, toFurnitureId: string, toDrawerId: string) => void;
+	onMoveItem: (
+		itemId: string,
+		toFurnitureId: string,
+		toDrawerId: string,
+	) => void;
 	allFurniture: Furniture[];
 	dragging: boolean;
 	onDragStart: () => void;
@@ -235,10 +237,10 @@ function DrawerCard({
 	onDrop,
 }: DrawerCardProps) {
 	const [moveFurnitureId, setMoveFurnitureId] = useState(furnitureId);
-	const targetFurniture = allFurniture.find((f) => f.id === moveFurnitureId) ?? allFurniture[0];
+	const targetFurniture =
+		allFurniture.find((f) => f.id === moveFurnitureId) ?? allFurniture[0];
 	const [moveDrawerId, setMoveDrawerId] = useState(drawer.id);
 	return (
-		// biome-ignore lint/a11y/noStaticElementInteractions: drag-and-drop reorder UI
 		<DrawerCardWrapper
 			$dragging={dragging}
 			draggable
@@ -312,12 +314,16 @@ function DrawerCard({
 												value={moveFurnitureId}
 												onChange={(e) => {
 													setMoveFurnitureId(e.target.value);
-													const f = allFurniture.find((fu) => fu.id === e.target.value);
+													const f = allFurniture.find(
+														(fu) => fu.id === e.target.value,
+													);
 													setMoveDrawerId(f?.drawers[0]?.id ?? '');
 												}}
 											>
 												{allFurniture.map((f) => (
-													<option key={f.id} value={f.id}>{f.label}</option>
+													<option key={f.id} value={f.id}>
+														{f.label}
+													</option>
 												))}
 											</MoveSelect>
 											<MoveSelect
@@ -325,12 +331,17 @@ function DrawerCard({
 												onChange={(e) => setMoveDrawerId(e.target.value)}
 											>
 												{(targetFurniture?.drawers ?? []).map((d) => (
-													<option key={d.id} value={d.id}>{d.label}</option>
+													<option key={d.id} value={d.id}>
+														{d.label}
+													</option>
 												))}
 											</MoveSelect>
 											<MoveBtn
 												type="button"
-												disabled={moveFurnitureId === furnitureId && moveDrawerId === drawer.id}
+												disabled={
+													moveFurnitureId === furnitureId &&
+													moveDrawerId === drawer.id
+												}
 												onClick={() => {
 													if (moveDrawerId) {
 														onMoveItem(item.id, moveFurnitureId, moveDrawerId);
@@ -376,7 +387,8 @@ function DrawerCard({
 							value={newItemInput}
 							onChange={(e) => onNewItemChange(e.target.value)}
 							onKeyDown={(e) => {
-								if (e.key === 'Enter' && !e.nativeEvent.isComposing) onAddItem();
+								if (e.key === 'Enter' && !e.nativeEvent.isComposing)
+									onAddItem();
 							}}
 							placeholder="아이템 이름 입력"
 						/>

@@ -625,8 +625,6 @@ export default function Canvas({ width, height }: CanvasProps) {
 
 			{/* Context Menu */}
 			{ctxMenu && (
-				// biome-ignore lint/a11y/noStaticElementInteractions: context menu click isolation
-				// biome-ignore lint/a11y/useKeyWithClickEvents: context menu does not need keyboard equivalent
 				<ContextMenu
 					style={{ left: ctxMenu.x, top: ctxMenu.y }}
 					onClick={(e) => e.stopPropagation()}

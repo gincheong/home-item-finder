@@ -145,7 +145,6 @@ export default function Sidebar({ onAddRoom, toast }: SidebarProps) {
 							<SelectedInfo>
 								{editingRoomName ? (
 									<RoomNameInput
-										// biome-ignore lint/a11y/noAutofocus: 이름 편집 시 즉시 포커스
 										autoFocus
 										defaultValue={selectedRoom.name}
 										onBlur={(e) => {
@@ -154,7 +153,8 @@ export default function Sidebar({ onAddRoom, toast }: SidebarProps) {
 											setEditingRoomName(false);
 										}}
 										onKeyDown={(e) => {
-											if (e.key === 'Enter' && !e.nativeEvent.isComposing) e.currentTarget.blur();
+											if (e.key === 'Enter' && !e.nativeEvent.isComposing)
+												e.currentTarget.blur();
 											if (e.key === 'Escape') {
 												setEditingRoomName(false);
 											}
@@ -181,7 +181,11 @@ export default function Sidebar({ onAddRoom, toast }: SidebarProps) {
 								<DeleteRoomBtn
 									type="button"
 									onClick={() => {
-										if (window.confirm(`"${selectedRoom.name}"을(를) 삭제할까요?\n방 안의 가구와 아이템도 모두 삭제됩니다.`))
+										if (
+											window.confirm(
+												`"${selectedRoom.name}"을(를) 삭제할까요?\n방 안의 가구와 아이템도 모두 삭제됩니다.`,
+											)
+										)
 											deleteRoom(selectedRoom.id);
 									}}
 								>
