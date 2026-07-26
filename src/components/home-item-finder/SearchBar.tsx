@@ -37,6 +37,9 @@ export default function SearchBar() {
 		selectRoom(roomId);
 		selectFurniture(furnitureId);
 		openDetail(furnitureId);
+		window.dispatchEvent(
+			new CustomEvent('canvas:focusFurniture', { detail: { id: furnitureId } }),
+		);
 		setOpen(false);
 		setSearchQuery('');
 	};

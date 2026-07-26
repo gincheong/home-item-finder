@@ -178,6 +178,24 @@ export default function Canvas({ width, height }: CanvasProps) {
 		return () => window.removeEventListener('canvas:startDrawing', handler);
 	}, []);
 
+	// Focus-on-furniture trigger from search results
+	useEffect(() => {
+		const handler = (e: Event) => {
+			const id = (e as CustomEvent<{ id: string }>).detail?.id;
+			const f = furniture.find((x) => x.id === id);
+			if (!f) return;
+			const cx = f.x + f.width / 2;
+			const cy = f.y + f.height / 2;
+			setView((v) => ({
+				...v,
+				x: width / 2 - cx * v.scale,
+				y: height / 2 - cy * v.scale,
+			}));
+		};
+		window.addEventListener('canvas:focusFurniture', handler);
+		return () => window.removeEventListener('canvas:focusFurniture', handler);
+	}, [furniture, width, height]);
+
 	// Room Transformer
 	// biome-ignore lint/correctness/useExhaustiveDependencies: rooms dep ensures ref freshness
 	useEffect(() => {
