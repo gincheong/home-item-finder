@@ -138,8 +138,9 @@ export default function Canvas({ width, height }: CanvasProps) {
 		const PAN_THRESHOLD = 5;
 		const onMove = (e: MouseEvent) => {
 			if (!panOrigin.current || drawModeRef.current) return;
-			const dx = e.clientX - panOrigin.current.mx;
-			const dy = e.clientY - panOrigin.current.my;
+			const { mx, my, tx, ty } = panOrigin.current;
+			const dx = e.clientX - mx;
+			const dy = e.clientY - my;
 			// Start panning only after threshold to distinguish from click
 			if (!isPanning.current) {
 				if (Math.sqrt(dx * dx + dy * dy) < PAN_THRESHOLD) return;
@@ -148,8 +149,8 @@ export default function Canvas({ width, height }: CanvasProps) {
 			}
 			setView((v) => ({
 				...v,
-				x: panOrigin.current!.tx + dx,
-				y: panOrigin.current!.ty + dy,
+				x: tx + dx,
+				y: ty + dy,
 			}));
 		};
 		const onUp = (e: MouseEvent) => {
